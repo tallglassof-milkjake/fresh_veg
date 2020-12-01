@@ -1,11 +1,3 @@
-// const { default: swal } = require("sweetalert");
-
-// const { default: swal } = require("sweetalert");
-
-// const { default: swal } = require("sweetalert");
-
-// const { default: swal } = require("sweetalert");
-
 $(document).ready(function() {
 
     $("#submitBtn").on('click', function(event) {
@@ -29,10 +21,6 @@ $(document).ready(function() {
                 throw error;
             }
         }
-
-        
-        
     });
-
 });
 

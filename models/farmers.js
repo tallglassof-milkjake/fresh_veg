@@ -8,6 +8,10 @@
  const {DataTypes} = require('sequelize')
  // Creates a "farmers" model that matches up with DB
 var farmers = sequelize.define("farmers", {
+  id: {
+   type: DataTypes.INTEGER,
+   primaryKey: true
+  },
   first_name: DataTypes.STRING,
   last_name: DataTypes.STRING,
 });

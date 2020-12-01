@@ -16,6 +16,8 @@ router.use(bodyParser.json());
 // route for an individual farmer's page
 const { Op } = require("sequelize");
 const products = require("../models/products");
+const { resolve } = require("path");
+const farmers = require("../models/farmers");
 
 router.get("/", (req, res) =>{
     const products = db.products.findAll();
@@ -66,6 +68,53 @@ router.get("/addvege", (req, res) => {
             res.render("addvege", handlebarsObj);
         })
         
+    } catch(error) {
+        res.status(500).send('Error, something is not working please try again.')
+    }
+});
+
+router.get("/profile", (req, res) => {
+    try{
+        db.products.belongsTo(db.farmers, {foreignKey: 'farmers_id'});
+        db.farmers.hasMany(db.products, {foreignKey: 'farmers_id'});
+        
+
+        db.products.findOne({
+            where: { farmers_id: 3},
+            include: [
+                {
+                    model: db.farmers,
+                    include: [
+                        {
+                            model: db.products
+                        }
+                    ]
+                }
+            ]
+        }).then(data => {
+            let myProduce = JSON.stringify(data);
+            let newProd = JSON.parse(myProduce);
+            
+            let prodObj = Object.assign({}, [newProd]);
+            
+            ;
+
+            let handlebarsObj = {
+                products: data
+            }
+
+            console.log(data)
+
+            let prodStr = JSON.stringify(prodObj);
+            res.render("profile", handlebarsObj);
+
+        })
+
+        // res.render("profile", newObj)
+        // User.hasMany(Post, {foreignKey: 'user_id'})
+        // Post.belongsTo(User, {foreignKey: 'user_id'})
+
+        // Post.find({ where: { ...}, include: [User]})
     } catch(error) {
         res.status(500).send('Error, something is not working please try again.')
     }
