@@ -32,30 +32,18 @@ router.get("/", (req, res) =>{
 });
  // route for an individual farmer's page
  router.get("/farmer", (req, res) =>{   
-     
-
- 
-
+    
     db.farmers.findAll( ).then(function(data) {
         // for each farmer get the product (better to do it as join)
-
-
-
          /*   let vegeArray = [{farmers:data, products:(products)}];
            console.log(vegeArray); */
+        let hdbrsObj = {
+            farmers: data,
+        };
 
-    
-          
-           
-           let hdbrsObj = {
-              farmers: data,
-            
-            };
-
-
-            res.render("index", hdbrsObj);
-          });
+        res.render("index", hdbrsObj);
     });
+});
 
 router.get("/addvege", (req, res) => {
     try {
@@ -73,14 +61,25 @@ router.get("/addvege", (req, res) => {
     }
 });
 
-router.get("/profile", (req, res) => {
+router.get("/:farmers_id/profile", (req, res) => {
+
+    // Need to change routing from index (homepage) when 'check growers' button pressed
+    // It should head to a page that references the item selected
+    // If this is possible will make a profile page for individual farmers so as to 
+    // Add an option to manage produce
+    
     try{
         db.products.belongsTo(db.farmers, {foreignKey: 'farmers_id'});
         db.farmers.hasMany(db.products, {foreignKey: 'farmers_id'});
         
+        console.log(req.params);
 
-        db.products.findOne({
-            where: { farmers_id: 3},
+        db.products.findAll({
+            where: { 
+                farmers_id: 2,
+                // first_name: $("#farm"),
+                // last_name: ,
+            },
             include: [
                 {
                     model: db.farmers,
@@ -92,29 +91,14 @@ router.get("/profile", (req, res) => {
                 }
             ]
         }).then(data => {
-            let myProduce = JSON.stringify(data);
-            let newProd = JSON.parse(myProduce);
-            
-            let prodObj = Object.assign({}, [newProd]);
-            
-            ;
-
             let handlebarsObj = {
                 products: data
             }
 
-            console.log(data)
-
-            let prodStr = JSON.stringify(prodObj);
+            // console.log(data)
             res.render("profile", handlebarsObj);
 
-        })
-
-        // res.render("profile", newObj)
-        // User.hasMany(Post, {foreignKey: 'user_id'})
-        // Post.belongsTo(User, {foreignKey: 'user_id'})
-
-        // Post.find({ where: { ...}, include: [User]})
+        });
     } catch(error) {
         res.status(500).send('Error, something is not working please try again.')
     }
@@ -144,7 +128,6 @@ router.get("/farmer/addvege", (req, res) =>{
  
 router.get("/farmer/:sales", (req, res) =>{
     let vegeparameter =  req.params.sales
- 
 
         db.sales.findOne({
             where:{     
@@ -167,10 +150,6 @@ router.get("/farmer/:sales", (req, res) =>{
             res.render("sales", hdbrsObj);
         });
 });
-
-
-
-
     
 // API Routes
 // =====================================================
